@@ -11,10 +11,49 @@ import Quickshell.Io
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
+import Quickshell.Hyprland
 
 Scope {
     id: root
-    property bool pinned: Config.options?.dock.pinnedOnStartup ?? false
+    property alias pinned: GlobalStates.dockPinned
+
+    IpcHandler {
+        target: "dock"
+
+        function togglePin(): void {
+            GlobalStates.dockPinned = !GlobalStates.dockPinned
+        }
+
+        function toggle(): void {
+            GlobalStates.dockPinned = !GlobalStates.dockPinned
+        }
+
+        function pin(): void {
+            GlobalStates.dockPinned = true
+        }
+
+        function unpin(): void {
+            GlobalStates.dockPinned = false
+        }
+    }
+
+    CompositorGlobalShortcut {
+        name: "dockPinToggle"
+        description: "Toggles pinning of dock/dash on press"
+
+        onPressed: {
+            GlobalStates.dockPinned = !GlobalStates.dockPinned;
+        }
+    }
+
+    CompositorGlobalShortcut {
+        name: "dashToggle"
+        description: "Toggles pinning of dock/dash on press"
+
+        onPressed: {
+            GlobalStates.dockPinned = !GlobalStates.dockPinned;
+        }
+    }
 
     Variants {
         model: Quickshell.screens
@@ -62,11 +101,13 @@ Scope {
                     topMargin: dockRoot.reveal
                         ? 0
                         : Config.options?.dock.hoverToReveal
-                            ? (dockRoot.implicitHeight - Config.options.dock.hoverRegionHeight)
+                            ? (dockRoot.implicitHeight - Math.max(Config.options.dock.hoverRegionHeight, 6))
                             : (dockRoot.implicitHeight + 1)
                     horizontalCenter: parent.horizontalCenter
                 }
-                implicitWidth: dockHoverRegion.implicitWidth + Appearance.sizes.elevationMargin * 2
+                implicitWidth: dockRoot.reveal
+                    ? (dockHoverRegion.implicitWidth + Appearance.sizes.elevationMargin * 2)
+                    : Math.max(dockHoverRegion.implicitWidth + Appearance.sizes.elevationMargin * 2, parent.width * 0.75)
                 hoverEnabled: true
 
                 Behavior on anchors.topMargin {
