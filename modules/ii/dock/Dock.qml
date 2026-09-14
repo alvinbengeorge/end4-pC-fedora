@@ -15,7 +15,7 @@ import Quickshell.Hyprland
 
 Scope {
     id: root
-    property alias pinned: GlobalStates.dockPinned
+    readonly property bool pinned: GlobalStates.dockPinned
 
     IpcHandler {
         target: "dock"
@@ -173,7 +173,7 @@ Scope {
                                     clickedWidth: baseWidth; clickedHeight: baseHeight + 20
                                     buttonRadius: Appearance.rounding.normal
                                     toggled: root.pinned
-                                    onClicked: root.pinned = !root.pinned
+                                    onClicked: GlobalStates.dockPinned = !GlobalStates.dockPinned
                                     contentItem: MaterialSymbol {
                                         text: "keep"
                                         horizontalAlignment: Text.AlignHCenter
