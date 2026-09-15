@@ -20,6 +20,12 @@ Scope {
     readonly property real frameThickness: (Config.options.bar.showFrame ? Config.options.bar.frameThickness : 0)
     readonly property color frameColor: Appearance.getColorFromName(Config.options.bar.frameColor)
 
+    // Dynamic contrast colors based on frame background brightness
+    readonly property real frameLuminance: (frameColor.r * 0.299 + frameColor.g * 0.587 + frameColor.b * 0.114)
+    readonly property color colContentText: frameLuminance < 0.5 ? "#F5F5F5" : "#1A1A1A"
+    readonly property color colContentSubtext: frameLuminance < 0.5 ? "#A8A8A8" : "#666666"
+    readonly property color colContentDivider: ColorUtils.transparentize(colContentText, 0.9)
+
     Variants {
         model: Quickshell.screens
 
@@ -285,7 +291,7 @@ Scope {
                                     text: islandContainer.hasTrack ? islandContainer.trackTitle : "No Media Playing"
                                     font.pixelSize: 11
                                     font.weight: Font.DemiBold
-                                    color: Appearance.colors.colText
+                                    color: root.colContentText
                                     elide: Text.ElideRight
                                 }
 
@@ -293,7 +299,7 @@ Scope {
                                     Layout.fillWidth: true
                                     text: islandContainer.hasTrack ? (islandContainer.trackArtist.length > 0 ? islandContainer.trackArtist : "Unknown Artist") : "Dynamic Island"
                                     font.pixelSize: 10
-                                    color: Appearance.colors.colSubtext
+                                    color: root.colContentSubtext
                                     elide: Text.ElideRight
                                 }
                             }
@@ -385,7 +391,7 @@ Scope {
                             Rectangle {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 1
-                                color: ColorUtils.transparentize(Appearance.colors.colText, 0.92)
+                                color: root.colContentDivider
                             }
 
                             // Middle Scrubber / Progress Bar
@@ -401,7 +407,7 @@ Scope {
                                         return `${m}:${s < 10 ? '0' : ''}${s}`;
                                     }
                                     font.pixelSize: 9
-                                    color: Appearance.colors.colSubtext
+                                    color: root.colContentSubtext
                                 }
 
                                 Rectangle {
@@ -409,7 +415,7 @@ Scope {
                                     Layout.fillWidth: true
                                     Layout.preferredHeight: 4
                                     radius: 2
-                                    color: ColorUtils.transparentize(Appearance.colors.colText, 0.8)
+                                    color: ColorUtils.transparentize(root.colContentText, 0.8)
 
                                     property real progressRatio: {
                                         const len = islandContainer.player?.length ?? 0;
@@ -448,7 +454,7 @@ Scope {
                                         return `${m}:${s < 10 ? '0' : ''}${s}`;
                                     }
                                     font.pixelSize: 9
-                                    color: Appearance.colors.colSubtext
+                                    color: root.colContentSubtext
                                 }
                             }
 
@@ -465,7 +471,7 @@ Scope {
                                     implicitWidth: 32
                                     implicitHeight: 32
                                     colBackground: "transparent"
-                                    colBackgroundHover: ColorUtils.transparentize(Appearance.colors.colText, 0.9)
+                                    colBackgroundHover: ColorUtils.transparentize(root.colContentText, 0.88)
                                     colRipple: ColorUtils.transparentize(Appearance.colors.colPrimary, 0.7)
                                     onClicked: {
                                         if (islandContainer.player?.canGoPrevious) islandContainer.player.previous();
@@ -475,7 +481,7 @@ Scope {
                                         anchors.centerIn: parent
                                         iconSize: 20
                                         text: "skip_previous"
-                                        color: Appearance.colors.colText
+                                        color: root.colContentText
                                     }
                                 }
 
@@ -503,7 +509,7 @@ Scope {
                                     implicitWidth: 32
                                     implicitHeight: 32
                                     colBackground: "transparent"
-                                    colBackgroundHover: ColorUtils.transparentize(Appearance.colors.colText, 0.9)
+                                    colBackgroundHover: ColorUtils.transparentize(root.colContentText, 0.88)
                                     colRipple: ColorUtils.transparentize(Appearance.colors.colPrimary, 0.7)
                                     onClicked: {
                                         if (islandContainer.player?.canGoNext) islandContainer.player.next();
@@ -513,7 +519,7 @@ Scope {
                                         anchors.centerIn: parent
                                         iconSize: 20
                                         text: "skip_next"
-                                        color: Appearance.colors.colText
+                                        color: root.colContentText
                                     }
                                 }
 
