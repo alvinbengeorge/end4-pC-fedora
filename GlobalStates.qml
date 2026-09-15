@@ -54,6 +54,9 @@ Singleton {
         || Config.options.bar.layouts.middleLayout.includes("dynamicIsland")
         || Config.options.bar.layouts.rightLayout.includes("dynamicIsland")
 
+    property bool topDynamicIslandVisible: false
+    property bool topDynamicIslandEnabled: true
+
     signal centeredWallpaperThumpRequested()
 
     // Shared by desktop (Background) and lock screen (LockSurface) scroll-to-cycle
@@ -80,6 +83,7 @@ Singleton {
         { displayName: Translation.tr("Overlay"),                value: "overlayOpen" },
         { displayName: Translation.tr("ScreenShot Region"),        value: "regionSelectorOpen" },
         { displayName: Translation.tr("Screen Translator"),      value: "screenTranslatorOpen" },
+        { displayName: Translation.tr("Top Dynamic Island"),     value: "topDynamicIslandVisible" },
         { displayName: Translation.tr("On-screen Keyboard"),     value: "oskOpen" },
         { displayName: Translation.tr("Session Menu"),           value: "sessionOpen" }
     ]
@@ -125,11 +129,35 @@ Singleton {
         }
     }
 
-     CompositorGlobalShortcut {
+    CompositorGlobalShortcut {
         name: "centeredWallpaperToggle"
         description: "Toggles centered wallpaper"
         onPressed: {
             Config.options.background.centeredWallpaper = !Config.options.background.centeredWallpaper
+        }
+    }
+
+    IpcHandler {
+        target: "island"
+        function toggle(): void {
+            root.topDynamicIslandVisible = !root.topDynamicIslandVisible
+        }
+        function show(): void {
+            root.topDynamicIslandVisible = true
+        }
+        function hide(): void {
+            root.topDynamicIslandVisible = false
+        }
+        function toggleEnable(): void {
+            root.topDynamicIslandEnabled = !root.topDynamicIslandEnabled
+        }
+    }
+
+    CompositorGlobalShortcut {
+        name: "islandToggle"
+        description: "Toggles top dynamic island"
+        onPressed: {
+            root.topDynamicIslandVisible = !root.topDynamicIslandVisible
         }
     }
 }
