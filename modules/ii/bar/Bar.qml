@@ -25,7 +25,7 @@ Scope {
         }
         LazyLoader {
             id: barLoader
-            active: GlobalStates.barOpen && !GlobalStates.screenLocked
+            active: GlobalStates.barOpen && !GlobalStates.screenLocked && !GlobalStates.startupLockPending
             required property ShellScreen modelData
             component: PanelWindow { // Bar window
                 id: barRoot
@@ -82,7 +82,7 @@ Scope {
 
                 exclusiveZone: (barContent.centerOnly && Config.options.bar.centerOnlyReserveFrame)
                     ? Config.options.bar.frameThickness
-                    : normalExclusiveZone
+                    : Config.options.bar.cornerStyle === 4 ? normalExclusiveZone + 4 : normalExclusiveZone
                 WlrLayershell.namespace: "quickshell:bar"
                 // Overlay layer only while special workspace sits on top of a fullscreen window on this monitor,
                 // else Top layer so fullscreen apps cover the bar as normal (Hyprland buries Top layer under fullscreen+special).

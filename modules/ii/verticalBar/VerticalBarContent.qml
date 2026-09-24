@@ -19,6 +19,7 @@ Item {
     readonly property real barPadding: 0
     readonly property bool isMaterial: Config.options.bar.cornerStyle === 3
     readonly property bool trayHasItems: SystemTray.items.values.length > 0
+    readonly property bool isPanel: Config.options.bar.cornerStyle === 4
 
     function filterLayout(layout) {
         if (trayHasItems) return layout
@@ -117,7 +118,7 @@ Item {
         // Top
         Item {
             anchors.top: parent.top
-            anchors.topMargin: root.isMaterial ? (Appearance.sizes.hyprlandGapsOut || 5) : (Config.options.bar.cornerStyle === 1 ? 4 : 10)
+            anchors.topMargin: root.isMaterial ? (Appearance.sizes.hyprlandGapsOut || 5) : Config.options.bar.cornerStyle === 1 ? 4 : Config.options.bar.cornerStyle === 4 ? 4 : 10
             anchors.left: parent.left
             anchors.right: parent.right
             height: root.isMaterial ? topMaterialPill.implicitHeight : topCol.implicitHeight
@@ -168,7 +169,10 @@ Item {
                 id: topCol
                 anchors.fill: parent
                 visible: !root.isMaterial
-                spacing: Config.options.bar.borderless === "transparent" ? -4 : Config.options?.bar.borderless === "segmented" ? -2 : 2
+                spacing: Config.options.bar.borderless === "transparent" ? -4
+                    : (Config.options?.bar.borderless === "segmented" && root.isPanel) ? 3
+                    : Config.options?.bar.borderless === "segmented" ? -2
+                    : root.isPanel ? 4 : 2
 
                 Repeater {
                     model: root.effectiveLeftLayout
@@ -245,7 +249,10 @@ Item {
                 id: middleCol
                 anchors.fill: parent
                 visible: !root.isMaterial
-                spacing: Config.options.bar.borderless === "transparent" ? -4 : Config.options?.bar.borderless === "segmented" ? -2 : 2
+                spacing: Config.options.bar.borderless === "transparent" ? -4
+                    : (Config.options?.bar.borderless === "segmented" && root.isPanel) ? 3
+                    : Config.options?.bar.borderless === "segmented" ? -2
+                    : root.isPanel ? 4 : 2
 
                 Repeater {
                     model: root.effectiveMiddleLayout
@@ -272,7 +279,7 @@ Item {
         // Bottom
         Item {
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: root.isMaterial ? (Appearance.sizes.hyprlandGapsOut|| 5) : (Config.options.bar.cornerStyle === 1 ? 4 : 10)
+            anchors.bottomMargin: root.isMaterial ? (Appearance.sizes.hyprlandGapsOut || 5) : Config.options.bar.cornerStyle === 1 ? 4 : Config.options.bar.cornerStyle === 4 ? 4 : 10
             anchors.left: parent.left
             anchors.right: parent.right
             height: root.isMaterial ? bottomMaterialPill.implicitHeight : bottomCol.implicitHeight
@@ -323,7 +330,10 @@ Item {
                 id: bottomCol
                 anchors.fill: parent
                 visible: !root.isMaterial
-                spacing: Config.options.bar.borderless === "transparent" ? -4 : Config.options?.bar.borderless === "segmented" ? -2 : 2
+                spacing: Config.options.bar.borderless === "transparent" ? -4
+                    : (Config.options?.bar.borderless === "segmented" && root.isPanel) ? 3
+                    : Config.options?.bar.borderless === "segmented" ? -2
+                    : root.isPanel ? 4 : 2
 
                 Repeater {
                     model: root.effectiveRightLayout

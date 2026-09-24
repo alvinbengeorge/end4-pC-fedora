@@ -20,6 +20,7 @@ import qs.modules.ii.background.widgets.notes
 import qs.modules.ii.background.widgets.todo
 import qs.modules.ii.background.widgets.timers
 import qs.modules.ii.background.widgets.ports
+import qs.modules.ii.background.widgets.customtext
 
 Item {
     id: root
@@ -35,6 +36,7 @@ Item {
         model: [
             { key: "visualizer" },
             { key: "customImage" },
+            { key: "sticker" },
             { key: "calendar" },
             { key: "weather" },
             { key: "clock", alwaysOnLock: true },
@@ -47,6 +49,7 @@ Item {
             { key: "todo" },
             { key: "timers" },
             { key: "ports" },
+            { key: "customText" },
         ]
 
         delegate: FadeLoader {
@@ -65,6 +68,7 @@ Item {
                 switch (loaderDelegate.modelData.key) {
                     case "visualizer":  return visualizerComp
                     case "customImage": return customImageComp
+                    case "sticker":     return stickerComp
                     case "calendar":    return calendarComp
                     case "weather":     return weatherComp
                     case "clock":       return clockComp
@@ -77,6 +81,7 @@ Item {
                     case "todo":        return todoComp
                     case "timers":      return timersComp
                     case "ports":       return portsComp
+                    case "customText":  return customTextComp
                 }
                 return null
             }
@@ -113,6 +118,17 @@ Item {
     Component {
         id: customImageComp
         CustomImage {
+            screenWidth: root.screen.width
+            screenHeight: root.screen.height
+            scaledScreenWidth: root.screen.width
+            scaledScreenHeight: root.screen.height
+            wallpaperScale: 1
+            wallpaperItem: root.wallpaperItem
+        }
+    }
+    Component {
+        id: stickerComp
+        StickerWidget {
             screenWidth: root.screen.width
             screenHeight: root.screen.height
             scaledScreenWidth: root.screen.width
@@ -246,6 +262,17 @@ Item {
     Component {
         id: portsComp
         PortsWidget {
+            screenWidth: root.screen.width
+            screenHeight: root.screen.height
+            scaledScreenWidth: root.screen.width
+            scaledScreenHeight: root.screen.height
+            wallpaperScale: 1
+            wallpaperItem: root.wallpaperItem
+        }
+    }
+    Component {
+        id: customTextComp
+        CustomTextWidget {
             screenWidth: root.screen.width
             screenHeight: root.screen.height
             scaledScreenWidth: root.screen.width

@@ -17,6 +17,9 @@ Item {
     readonly property bool isMaterial: Config.options.bar.cornerStyle === 3
     readonly property real centerPillX: centerPill.x
     readonly property real centerPillWidth: centerPill.width
+    readonly property bool isPanel: Config.options.bar.cornerStyle === 4
+    readonly property var diLeftWidgets:  filterLayout(Config.options.bar.dynamicIsland.leftWidgets ?? [])
+    readonly property var diRightWidgets: filterLayout(Config.options.bar.dynamicIsland.rightWidgets ?? [])
 
     readonly property bool trayHasItems: SystemTray.items.values.length > 0
 
@@ -79,7 +82,7 @@ Item {
             : "transparent"
         radius: Config.options.bar.cornerStyle === 1 ? Appearance.rounding.windowRounding : 0
         border.width: (!centerOnly && Config.options.bar.cornerStyle === 1) ? 1 : 0
-        border.color: Config.options.bar.cornerStyle === 1 && !Config.options.bar.showBackground ? "transparent" : Appearance.colors.colLayer0Border
+        border.color: Config.options.bar.cornerStyle === 1 && !Config.options.bar.showBackground ? "transparent" : ColorUtils.transparentize(Appearance.colors.colLayer0Border, 0.8) 
     }
 
     // center-only
@@ -132,7 +135,7 @@ Item {
             ? (Config.options.bar.cornerStyle === 1 ? middleRow.implicitWidth + 8 : middleRow.implicitWidth - 4)
             : middleRow.implicitWidth + 10
         height: GlobalStates.dynamicIslandEnabled ? parent.height : parent.height - (Config.options.bar.cornerStyle === 1 ? Appearance.sizes.hyprlandGapsOut * 2 : 0)
-        color: Config.options.bar.followFrameColor
+        color: root.isMaterial ? "transparent" : Config.options.bar.followFrameColor 
             ? Appearance.getColorFromName(Config.options.bar.frameColor)
             : Appearance.colors.colLayer0
         radius: Config.options.bar.cornerStyle === 1 || root.isMaterial ? Appearance.rounding.windowRounding : 0
@@ -183,7 +186,7 @@ Item {
         // Left
         Item {
             anchors.left: parent.left
-            anchors.leftMargin: root.isMaterial ? (Config.options.hyprland.general.gapsOut || 5) : (Config.options.bar.cornerStyle === 1 ? 4 : 8)
+            anchors.leftMargin: root.isMaterial ? (Config.options.hyprland.general.gapsOut || 5) : Config.options.bar.cornerStyle === 1 ? 4 : Config.options.bar.cornerStyle === 4 ? 4 : 8
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             width: root.isMaterial ? leftMaterialPill.implicitWidth : leftRow.implicitWidth
@@ -234,7 +237,10 @@ Item {
                 id: leftRow
                 visible: !root.isMaterial
                 anchors.fill: parent
-                spacing: Config.options.bar.borderless === "transparent" ? -7 : Config.options?.bar.borderless === "segmented" ? -1 : 2
+                spacing: Config.options.bar.borderless === "transparent" ? -7
+                    : (Config.options?.bar.borderless === "segmented" && root.isPanel) ? 3
+                    : Config.options?.bar.borderless === "segmented" ? -1
+                    : root.isPanel ? 4 : 2
 
                 Repeater {
                     model: root.effectiveLeftLayout
@@ -280,6 +286,26 @@ Item {
             anchors.centerIn: parent
             width: root.isMaterial ? centerMaterialPill.implicitWidth : middleRow.implicitWidth
             height: parent.height
+
+            // Dynamic Island — left
+            Loader {
+                id: diLeftWidget
+                anchors.right: absoluteCenter.left
+                anchors.rightMargin: 8
+                anchors.verticalCenter: absoluteCenter.verticalCenter
+                active: Config.options.bar.dynamicIsland.leftWidget !== "none" && GlobalStates.dynamicIslandEnabled
+                source: active ? root.getWidgetUrl(Config.options.bar.dynamicIsland.leftWidget) : ""
+            }
+
+            // Dynamic Island — right
+            Loader {
+                id: diRightWidget
+                anchors.left: absoluteCenter.right
+                anchors.leftMargin: 8
+                anchors.verticalCenter: absoluteCenter.verticalCenter
+                active: Config.options.bar.dynamicIsland.rightWidget !== "none" && GlobalStates.dynamicIslandEnabled
+                source: active ? root.getWidgetUrl(Config.options.bar.dynamicIsland.rightWidget) : ""
+            }
 
             // Material pill wrapper
             Rectangle {
@@ -328,7 +354,10 @@ Item {
                 id: middleRow
                 visible: !root.isMaterial
                 anchors.fill: parent
-                spacing: Config.options.bar.borderless === "transparent" ? -7 : Config.options?.bar.borderless === "segmented" ? -1 : 2
+                spacing: Config.options.bar.borderless === "transparent" ? -7
+                    : (Config.options?.bar.borderless === "segmented" && root.isPanel) ? 3
+                    : Config.options?.bar.borderless === "segmented" ? -1
+                    : root.isPanel ? 4 : 2
 
                 Repeater {
                     model: root.effectiveMiddleLayout
@@ -371,7 +400,7 @@ Item {
         // Right
         Item {
             anchors.right: parent.right
-            anchors.rightMargin: root.isMaterial ? (Config.options.hyprland.general.gapsOut || 5) : (Config.options.bar.cornerStyle === 1 ? 4 : 8)
+            anchors.rightMargin: root.isMaterial ? (Config.options.hyprland.general.gapsOut || 5) : Config.options.bar.cornerStyle === 1 ? 4 : Config.options.bar.cornerStyle === 4 ? 4 : 8
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             width: root.isMaterial ? rightMaterialPill.implicitWidth : rightRow.implicitWidth
@@ -425,7 +454,10 @@ Item {
                 id: rightRow
                 visible: !root.isMaterial
                 anchors.fill: parent
-                spacing: Config.options.bar.borderless === "transparent" ? -7 : Config.options?.bar.borderless === "segmented" ? -1 : 2
+                spacing: Config.options.bar.borderless === "transparent" ? -7
+                    : (Config.options?.bar.borderless === "segmented" && root.isPanel) ? 3
+                    : Config.options?.bar.borderless === "segmented" ? -1
+                    : root.isPanel ? 4 : 2
 
                 Repeater {
                     model: root.effectiveRightLayout
