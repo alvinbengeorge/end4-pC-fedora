@@ -88,6 +88,7 @@ Singleton {
             property JsonObject ai: JsonObject {
                 property string systemPrompt: "## Style\n- Use casual tone, don't be formal!\n- Always be brief and to the point, unless asked otherwise\n- Don't repeat the user's question\n- Be approachable: Avoid using overly complicated, domain-specific terms and provide analogies when asked to explain a concept\n\n## Context (ignore when irrelevant)\n- You are a helpful and inspiring sidebar assistant on a {DISTRO} Linux system\n- Desktop environment: {DE}\n- Current date & time: {DATETIME}\n- Focused app: {WINDOWCLASS}\n\n## Presentation\n- Use Markdown features in your response: \n  - **Bold** text to **highlight keywords** in your response\n  - **Split long information into small sections** with h2 headers and a relevant emoji at the start of it (for example `## 🐧 Linux`). Bullet points are preferred over long paragraphs, unless you're offering writing support or instructed otherwise by the user.\n- Asked to compare different options? You should firstly use a table to compare the main aspects, then elaborate or include relevant comments from online forums *after* the table. Make sure to provide a final recommendation for the user's use case!\n- Use LaTeX formatting for mathematical and scientific notations whenever appropriate. Enclose all LaTeX '$$' delimiters. NEVER generate LaTeX code in a latex block unless the user explicitly asks for it. DO NOT use LaTeX for regular documents (resumes, letters, essays, CVs, etc.).\n\nThanks!\n"
                 property string tool: "functions" // search, functions, or none
+                property string vllmEndpoint: "http://localhost:8000"
                 property list<var> extraModels: [
                     {
                         "api_format": "openai", // Most of the time you want "openai". Use "gemini" for Google's models
@@ -612,10 +613,27 @@ Singleton {
 
             property JsonObject interactions: JsonObject {
                 property JsonObject scrolling: JsonObject {
-                    property bool fasterTouchpadScroll: false // Enable faster scrolling with touchpad
-                    property int mouseScrollDeltaThreshold: 120 // delta >= this then it gets detected as mouse scroll rather than touchpad
-                    property int mouseScrollFactor: 120
-                    property int touchpadScrollFactor: 450
+                    property bool fasterTouchpadScroll: true // Master switch for inertial scroll engine
+
+                    // === Touchpad physics ===
+                    property real flingFriction: 0.002
+                    property real flingStopThreshold: 0.01
+                    // Sensitivity: pixels per angleDelta unit during finger-follow phase
+                    property real touchpadSensitivity: 3.5
+                    // Velocity reflection coefficient at bounds (0 = hard stop, 1 = perfect bounce)
+                    property real bounceDamping: 0.3
+
+                    // === Mouse wheel ===
+                    property int wheelScrollAmount: 100
+                    property int wheelDurationMin: 200
+                    property int wheelDurationMax: 400
+
+                    // === Detection ===
+                    property int mouseScrollDeltaThreshold: 120 // angleDelta >= this = mouse wheel
+
+                    // === Relative Multipliers ===
+                    property real touchpadScrollFactor: 1.0 // scales touchpadSensitivity per-instance
+                    property real mouseScrollFactor: 1.0    // scales wheelScrollAmount per-instance
                 }
                 property JsonObject deadPixelWorkaround: JsonObject { // Hyprland leaves out 1 pixel on the right for interactions
                     property bool enable: false
@@ -895,6 +913,15 @@ Singleton {
                 property bool closeAfterSelection: true
                 property int changeInterval: 0 
                 property string sortMode: "time"
+                property string wallhavenApiKey: "" // fallback; keyring ("/wallhaven <key>") takes precedence
+                property string wallhavenCategories: "111"
+                property string wallhavenPurity: "100"
+                property string wallhavenSorting: "relevance"
+                property string wallhavenOrder: "desc"
+                property string wallhavenRatios: ""
+                property string wallhavenColors: ""
+                property string wallhavenQuery: ""
+                property string wallhavenTopRange: "1y"
             }
 
             property JsonObject windows: JsonObject {
