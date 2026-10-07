@@ -14,7 +14,7 @@ Scope {
     property var focusedMonitor: Hyprland.focusedMonitor
 
     function switchWorkspaceRelative(direction) {
-        Hyprland.dispatch(`hl.dsp.focus({workspace = "r${direction === "next" ? "+1" : "-1"}"})`);
+        Hyprland.dispatch(`workspace r${direction === "next" ? "+1" : "-1"}`);
     }
     function normalizeWindow(w) {
         return {
@@ -28,16 +28,16 @@ Scope {
     }
 
     function focusWindow(id) {
-        Hyprland.dispatch(`hl.dsp.focus({ window = "address:${id}" })`);
+        Hyprland.dispatch(`focuswindow address:${id}`);
     }
     function closeWindow(id) {
-        Hyprland.dispatch(`hl.dsp.window.close({ window = "address:${id}" })`);
+        Hyprland.dispatch(`closewindow address:${id}`);
     }
     function switchWorkspace(id) {
-        Hyprland.dispatch(`hl.dsp.focus({ workspace = ${id} })`);
+        Hyprland.dispatch(`workspace ${id}`);
     }
     function moveWindowToWorkspace(id, wsId) {
-        Hyprland.dispatch(`hl.dsp.window.move({ workspace = ${wsId}, follow = false, window = "address:${id}" })`);
+        Hyprland.dispatch(`movetoworkspacesilent ${wsId},address:${id}`);
     }
 
     function monitorFor(screen) {

@@ -47,9 +47,9 @@ for app in autostart.get("apps", []):
     if not command:
         continue
 
-    dispatch(f"hl.dsp.focus({{workspace = {workspace}}})")
-    dispatch(f"hl.dsp.exec_cmd({lua_string(os.path.expanduser(command))})")
+    dispatch(f"workspace {workspace}")
+    dispatch(f"exec {os.path.expanduser(command)}")
     time.sleep(max(delay, 0.4))
 
 if original is not None:
-    dispatch(f"hl.dsp.focus({{workspace = {original}}})")
+    dispatch(f"workspace {original}")

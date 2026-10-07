@@ -143,7 +143,7 @@ Item {
                                 onPressed: {
                                     if (root.draggingTargetWorkspace === -1) {
                                         GlobalStates.overviewOpen = false
-                                        Hyprland.dispatch(`hl.dsp.focus({ workspace = ${workspace.workspaceValue} })`)
+                                        Hyprland.dispatch(`workspace ${workspace.workspaceValue}`)
                                     }
                                 }
                             }
@@ -278,7 +278,7 @@ Item {
                             root.draggingFromWorkspace = -1
                             if (targetWorkspace !== -1 && targetWorkspace !== windowData?.workspace.id) {
                                 if (!window.windowData.floating) {
-                                    Hyprland.dispatch(`hl.dsp.window.move({ workspace = ${targetWorkspace}, follow = false, window = "address:${window.windowData?.address}" })`)
+                                    Hyprland.dispatch(`movetoworkspacesilent ${targetWorkspace},address:${window.windowData?.address}`)
                                     // Animate non-float: predict final size (will fill workspace if alone)
                                     const targetColIndex = getWsColumn(targetWorkspace)
                                     const targetRowIndex = getWsRow(targetWorkspace)
@@ -303,7 +303,7 @@ Item {
                                     window.y = targetYOffset + (root.workspaceImplicitHeight - finalH) / 2
                                 } else {
                                     // Float: keep consistent screen position across workspaces
-                                    Hyprland.dispatch(`hl.dsp.window.move({ workspace = ${targetWorkspace}, follow = false, window = "address:${window.windowData?.address}" })`)
+                                    Hyprland.dispatch(`movetoworkspacesilent ${targetWorkspace},address:${window.windowData?.address}`)
                                     // Use captured dragStart position (most accurate) instead of initX (may be stale)
                                     const percentageX = (window.dragStartX - xOffset) / root.workspaceImplicitWidth
                                     const percentageY = (window.dragStartY - yOffset) / root.workspaceImplicitHeight
@@ -322,7 +322,7 @@ Item {
                                 }
                                 const percentageX = (window.x - xOffset) / root.workspaceImplicitWidth
                                 const percentageY = (window.y - yOffset) / root.workspaceImplicitHeight
-                                Hyprland.dispatch(`hl.dsp.window.move({ x = "${percentageX * root.screen.width}", y = "${percentageY * root.screen.height}", window = "address:${window.windowData?.address}" })`)
+                                Hyprland.dispatch(`movewindowpixel exact ${Math.round(percentageX * root.screen.width)} ${Math.round(percentageY * root.screen.height)},address:${window.windowData?.address}`)
                             }
                         }
                         onClicked: (event) => {
@@ -330,10 +330,10 @@ Item {
 
                             if (event.button === Qt.LeftButton) {
                                 GlobalStates.overviewOpen = false
-                                Hyprland.dispatch(`hl.dsp.focus({ window = "address:${windowData.address}" })`)
+                                Hyprland.dispatch(`focuswindow address:${windowData.address}`)
                                 event.accepted = true
                             } else if (event.button === Qt.MiddleButton) {
-                                Hyprland.dispatch(`hl.dsp.window.close({ window = "address:${windowData.address}" })`)
+                                Hyprland.dispatch(`closewindow address:${windowData.address}`)
                                 event.accepted = true
                             }
                         }

@@ -283,6 +283,7 @@ Item {
                     case PowerProfile.PowerSaver: return "energy_savings_leaf"
                     case PowerProfile.Balanced: return "airwave"
                     case PowerProfile.Performance: return "local_fire_department"
+                    default: return "energy_savings_leaf"
                 }
                 onClicked: (e) => {
                     if (PowerProfiles.hasPerformanceProfile) {
@@ -290,6 +291,7 @@ Item {
                             case PowerProfile.PowerSaver: PowerProfiles.profile = PowerProfile.Balanced; break;
                             case PowerProfile.Balanced: PowerProfiles.profile = PowerProfile.Performance; break;
                             case PowerProfile.Performance: PowerProfiles.profile = PowerProfile.PowerSaver; break;
+                            default: PowerProfiles.profile = PowerProfile.Balanced; break;
                         }
                     } else {
                         PowerProfiles.profile = PowerProfiles.profile == PowerProfile.Balanced ? PowerProfile.PowerSaver : PowerProfile.Balanced
@@ -306,6 +308,7 @@ Item {
                             case PowerProfile.PowerSaver: PowerProfiles.profile = PowerProfile.Balanced; break;
                             case PowerProfile.Balanced: PowerProfiles.profile = PowerProfile.Performance; break;
                             case PowerProfile.Performance: PowerProfiles.profile = PowerProfile.PowerSaver; break;
+                            default: PowerProfiles.profile = PowerProfile.Balanced; break;
                         }
                     } else {
                         PowerProfiles.profile = PowerProfiles.profile == PowerProfile.Balanced ? PowerProfile.PowerSaver : PowerProfile.Balanced
@@ -318,6 +321,7 @@ Item {
                         case PowerProfile.PowerSaver: return "energy_savings_leaf"
                         case PowerProfile.Balanced: return "airwave"
                         case PowerProfile.Performance: return "local_fire_department"
+                        default: return "energy_savings_leaf"
                     }
                     iconSize: Appearance.font.pixelSize.large
                     color: root.contentColor
