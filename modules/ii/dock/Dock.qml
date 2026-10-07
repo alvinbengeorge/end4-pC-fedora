@@ -15,8 +15,37 @@ import Quickshell.Hyprland
 
 Scope {
     id: root
-<<<<<<< HEAD
     readonly property bool pinned: GlobalStates.dockPinned
+    property bool barState: false
+    property bool ready: false
+
+    Component.onCompleted: {
+        DockStyle.position = Config.options.dock.position
+        barSettleTimer.start()
+    }
+
+    Timer {
+        id: barSettleTimer
+        interval: 300
+        onTriggered: {
+            root.barState = GlobalStates.barOpen
+            DockStyle.position = Config.options.dock.position
+            root.ready = true
+        }
+    }
+
+    Connections {
+        target: Config.options.dock
+        function onPositionChanged() {
+            root.ready = false
+            barSettleTimer.restart()
+        }
+    }
+
+    Connections {
+        target: GlobalStates
+        function onBarOpenChanged() { barSettleTimer.restart() }
+    }
 
     IpcHandler {
         target: "dock"
@@ -54,38 +83,6 @@ Scope {
         onPressed: {
             GlobalStates.dockPinned = !GlobalStates.dockPinned;
         }
-=======
-    property bool pinned: Config.options?.dock.pinnedOnStartup ?? false
-    property bool barState: false
-    property bool ready: false
-
-    Component.onCompleted: {
-        DockStyle.position = Config.options.dock.position
-        barSettleTimer.start()
-    }
-
-    Timer {
-        id: barSettleTimer
-        interval: 300
-        onTriggered: {
-            root.barState = GlobalStates.barOpen
-            DockStyle.position = Config.options.dock.position
-            root.ready = true
-        }
-    }
-
-    Connections {
-        target: Config.options.dock
-        function onPositionChanged() {
-            root.ready = false
-            barSettleTimer.restart()
-        }
-    }
-
-    Connections {
-        target: GlobalStates
-        function onBarOpenChanged() { barSettleTimer.restart() }
->>>>>>> 75060ff1650f9f79dfee612f991b2f5e129ed433
     }
 
     Variants {
@@ -148,22 +145,7 @@ Scope {
 
             MouseArea {
                 id: dockMouseArea
-<<<<<<< HEAD
-                height: parent.height
-                anchors {
-                    top: parent.top
-                    topMargin: dockRoot.reveal
-                        ? 0
-                        : Config.options?.dock.hoverToReveal
-                            ? (dockRoot.implicitHeight - Math.max(Config.options.dock.hoverRegionHeight, 6))
-                            : (dockRoot.implicitHeight + 1)
-                    horizontalCenter: parent.horizontalCenter
-                }
-                implicitWidth: dockRoot.reveal
-                    ? (dockHoverRegion.implicitWidth + Appearance.sizes.elevationMargin * 2)
-                    : Math.max(dockHoverRegion.implicitWidth + Appearance.sizes.elevationMargin * 2, parent.width * 0.75)
-=======
->>>>>>> 75060ff1650f9f79dfee612f991b2f5e129ed433
+                anchors.fill: parent
                 hoverEnabled: true
                 width: dockRoot.vertical ? parent.width : implicitWidth
                 height: dockRoot.vertical ? implicitHeight : parent.height
