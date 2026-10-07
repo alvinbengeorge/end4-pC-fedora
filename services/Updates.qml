@@ -40,6 +40,22 @@ Singleton {
     }
 
     Process {
+        id: checkAvailabilityProc
+        running: Config.ready && Config.options.updates.enableCheck
+        command: ["bash", "-c", "command -v dnf || command -v checkupdates"]
+        onExited: (exitCode, exitStatus) => {
+            root.available = (exitCode === 0);
+            firstCheckTimer.start();
+        }
+    }
+
+    Timer {
+        id: firstCheckTimer
+        interval: 60 * 1000
+        onTriggered: root.refresh()
+    }
+
+    Process {
         id: checkUpdatesProc
         command: ["bash", "-c", "
             total=0

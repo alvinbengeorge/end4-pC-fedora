@@ -38,6 +38,9 @@ Scope {
 
         mask: Region {
             item: GlobalStates.overviewOpen ? columnLayout : null
+            Region {
+                item: searchWidget.clipboardPopover.visible ? searchWidget.clipboardPopover : null
+            }
         }
 
         anchors {
