@@ -25,43 +25,17 @@ AbstractBackgroundWidget {
 
     property string mode: "list" // "list" | "presets"
 
-    function toggleFlip() { flipAnim.start() }
+    function toggleFlip() { cardWrapper.flip() }
 
-    Item {
+    FlipCard {
         id: cardWrapper
         anchors.fill: parent
+        onFlipped: root.mode = (root.mode === "list" ? "presets" : "list")
 
-        transform: Scale {
-            id: flipScale
-            origin.x: cardWrapper.width  / 2
-            origin.y: cardWrapper.height / 2
-            xScale: 1
-        }
-
-        SequentialAnimation {
-            id: flipAnim
-            NumberAnimation {
-                target: flipScale; property: "xScale"
-                to: 0; duration: 150; easing.type: Easing.InQuad
-            }
-            ScriptAction {
-                script: root.mode = (root.mode === "list" ? "presets" : "list")
-            }
-            NumberAnimation {
-                target: flipScale; property: "xScale"
-                to: 1; duration: 150; easing.type: Easing.OutQuad
-            }
-        }
-
-        StyledRectangularShadow {
-            target: contentRect
-            z: -2
-        }
-
-        Rectangle {
+        WidgetCard {
             id: contentRect
             anchors.fill: parent
-            color: Appearance.colors.colPrimaryContainer
+            widget: root
             radius: Appearance.rounding?.verylarge ?? 24
 
             // ==========================================
@@ -188,7 +162,7 @@ AbstractBackgroundWidget {
                         radius: Appearance.rounding?.small ?? 10
                         color: Appearance.colors.colLayer1
                         border.width: 1
-                        border.color: Appearance.colors.colLayer1Border
+                        border.color: Appearance.colors.colLayer0Border
 
                         RowLayout {
                             anchors.fill: parent
@@ -423,7 +397,7 @@ AbstractBackgroundWidget {
                             radius: Appearance.rounding?.small ?? 8
                             color: nodeHover.hovered ? Appearance.m3colors.m3error : Appearance.colors.colLayer1
                             border.width: 1
-                            border.color: nodeHover.hovered ? Appearance.m3colors.m3error : Appearance.colors.colLayer1Border
+                            border.color: nodeHover.hovered ? Appearance.m3colors.m3error : Appearance.colors.colLayer0Border
 
                             RowLayout {
                                 anchors.centerIn: parent
@@ -448,7 +422,7 @@ AbstractBackgroundWidget {
                             radius: Appearance.rounding?.small ?? 8
                             color: pyHover.hovered ? Appearance.m3colors.m3error : Appearance.colors.colLayer1
                             border.width: 1
-                            border.color: pyHover.hovered ? Appearance.m3colors.m3error : Appearance.colors.colLayer1Border
+                            border.color: pyHover.hovered ? Appearance.m3colors.m3error : Appearance.colors.colLayer0Border
 
                             RowLayout {
                                 anchors.centerIn: parent
@@ -486,7 +460,7 @@ AbstractBackgroundWidget {
                         radius: Appearance.rounding?.small ?? 8
                         color: Appearance.colors.colLayer1
                         border.width: 1
-                        border.color: Appearance.colors.colLayer1Border
+                        border.color: Appearance.colors.colLayer0Border
 
                         ColumnLayout {
                             anchors.fill: parent
