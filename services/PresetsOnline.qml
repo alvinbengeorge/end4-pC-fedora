@@ -28,7 +28,7 @@ Singleton {
     property int sourceIndex: 0
     property int failedSources: 0
 
-    readonly property int indexVersion: 3
+    readonly property int indexVersion: 4
 
     readonly property var sources: [
         { repo: "pctrade/end4-pCpresets", branch: "main", prefix: "pctrade--", sanitize: true, rootWallpapers: false, authorsBranch: "gallery-data" },
@@ -165,7 +165,9 @@ Singleton {
     function publishListing(authors) {
         const presets = root.listed.map(entry => {
             const known = authors[entry.name];
-            return known ? Object.assign({}, entry, { author: known }) : entry;
+            if (known) return Object.assign({}, entry, { author: known });
+            const hasIndex = root.sources.some(src => src.authorsBranch && src.repo === entry.repo);
+            return hasIndex ? Object.assign({}, entry, { author: "" }) : entry;
         });
         root.previewLimit = 3;
         root.entries = presets;
@@ -396,7 +398,7 @@ Singleton {
             }
             const finalJsonPath = `${root.cacheDir()}/${assetsProc.entryName}.json`;
             const sanitize = root.activeEntry?.sanitize ?? false;
-            const jqFilter = (sanitize ? root.shareFilter : "") + '$files as $files | walk(if type == "string" then ((split("/") | last) as $base | if ($files | index($base)) then ($dir + "/" + $base) else . end) else . end) | if has("profile") then .profile.avatarPath = $dir else . end | ._presetMeta.source = "online"';
+            const jqFilter = (sanitize ? root.shareFilter : "") + '$files as $files | def fix: walk(if type == "string" then ((split("/") | last) as $base | if ($files | index($base)) then ($dir + "/" + $base) else . end) else . end); fix | if (.background.collage.tree? // null) != null then .background.collage.tree |= (try (fromjson | fix | tojson) catch .) else . end | if has("profile") then .profile.avatarPath = $dir else . end | ._presetMeta.source = "online"';
             const filesJson = JSON.stringify(assetsProc.assetFilenames);
             const cmd = `jq --arg dir ${root.shQuote(assetsProc.assetCacheDirPath)} --argjson files ${root.shQuote(filesJson)} ${root.shQuote(jqFilter)} ${root.shQuote(assetsProc.stagingJsonPath)} > ${root.shQuote(finalJsonPath)} && rm -f ${root.shQuote(assetsProc.stagingJsonPath)}`;
             rewriteProc.command = ["bash", "-c", cmd];
