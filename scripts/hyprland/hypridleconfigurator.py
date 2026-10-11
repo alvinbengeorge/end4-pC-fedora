@@ -11,8 +11,8 @@ LISTENERS = {
     },
     "screenOff": {
         "match": ["dpms"],
-        "on-timeout": "hyprctl dispatch 'hl.dsp.dpms({ action = \"disable\" })'",
-        "on-resume": "hyprctl dispatch 'hl.dsp.dpms({ action = \"enable\" })'",
+        "on-timeout": "hyprctl dispatch dpms off",
+        "on-resume": "hyprctl dispatch dpms on",
     },
     "suspend": {
         "match": ["$suspend_cmd"],

@@ -14,11 +14,13 @@ QuickToggleModel {
         case PowerProfile.PowerSaver: return "energy_savings_leaf"
         case PowerProfile.Balanced: return "airwave"
         case PowerProfile.Performance: return "local_fire_department"
+        default: return "energy_savings_leaf"
     }
     statusText: switch(PowerProfiles.profile) {
         case PowerProfile.PowerSaver: return "Power Saver"
         case PowerProfile.Balanced: return "Balanced"
         case PowerProfile.Performance: return "Performance"
+        default: return "Balanced"
     }
     
     mainAction: () => {
